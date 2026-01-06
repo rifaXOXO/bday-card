@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday!</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&family=Bebas+Neue&display=swap');
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #e0f7ff, #b3cbff);
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.page {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.page.active { display: flex; }
+
+.instruction {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2rem;
+  margin-bottom: 50px;
+  letter-spacing: 2px;
+  color: #2d3748;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.birthday-text {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 4rem;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+  opacity: 0;
+  transition: opacity 1s;
+  margin-bottom: 30px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 18px 45px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  border: none;
+  border-radius: 8px;
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s;
+  box-shadow: 0 8px 0 #4c63d2;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 0 #4c63d2;
+}
+
+button:active {
+  transform: translateY(3px);
+  box-shadow: 0 5px 0 #4c63d2;
+}
+
+/* Cake (unchanged) */
+.cake { position: relative; width: 240px; height: 200px; cursor: pointer; margin-bottom: 40px; }
+
+.cake-base { 
+  position: absolute; 
+  bottom: 0; 
+  width: 100%; 
+  height: 80px; 
+  background: linear-gradient(to bottom, #6a4c93 0%, #5a3d7a 100%);
+  border-radius: 15px; 
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.cake-base::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 10px;
+  right: 10px;
+  height: 15px;
+  background: linear-gradient(to right, #4a90e2, #357abd, #4a90e2);
+  border-radius: 10px;
+}
+
+.frosting { 
+  position: absolute; 
+  bottom: 80px; 
+  left: 10px; 
+  width: 220px; 
+  height: 70px; 
+  background: linear-gradient(to bottom, #87ceeb 0%, #5dade2 100%);
+  border-radius: 12px; 
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.frosting::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(to right, #4a90e2, #357abd, #4a90e2);
+  border-radius: 10px;
+}
+
+.decoration {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  top: 30px;
+}
+
+.decoration:nth-child(1) { left: 30px; background: #4a90e2; }
+.decoration:nth-child(2) { left: 60px; background: #357abd; }
+.decoration:nth-child(3) { left: 90px; background: #4a90e2; }
+.decoration:nth-child(4) { left: 120px; background: #357abd; }
+.decoration:nth-child(5) { left: 150px; background: #4a90e2; }
+.decoration:nth-child(6) { left: 180px; background: #357abd; }
+
+.candle { 
+  position: absolute; 
+  width: 12px; 
+  height: 50px; 
+  background: linear-gradient(to bottom, #fff5ee 0%, #ffe4e1 100%);
+  left: 50%; 
+  bottom: 150px; 
+  transform: translateX(-50%); 
+  border-radius: 3px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.candle::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 10px;
+  background: #ff6347;
+  top: -10px;
+  left: 2px;
+  border-radius: 50% 50% 0 0;
+}
+
+.flame { 
+  position: absolute; 
+  width: 25px; 
+  height: 35px; 
+  background: radial-gradient(ellipse at center, #fff700 0%, #ffa500 50%, #ff4500 100%);
+  left: 50%; 
+  bottom: 200px; 
+  transform: translateX(-50%); 
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.3s infinite alternate; 
+  box-shadow: 0 0 25px #ffa500, 0 0 40px rgba(255,165,0,0.5);
+}
+
+.flame.blown { opacity: 0; transition: opacity 0.3s; }
+
+@keyframes flicker { 
+  0% { transform: translateX(-50%) scale(1); }
+  100% { transform: translateX(-50%) scale(1.1) translateY(-3px); }
+}
+
+/* Gift */
+.gift-box {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  cursor: pointer;
+  margin-bottom: 40px;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.box-body {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 180px;
+  height: 120px;
+  background: #4a90e2;
+  border-radius: 8px;
+}
+
+.box-lid {
+  position: absolute;
+  top: 30px;
+  left: 10px;
+  width: 200px;
+  height: 50px;
+  background: #357abd;
+  border-radius: 8px 8px 4px 4px;
+  transform-origin: bottom;
+  transition: transform 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
+}
+
+.box-lid.open {
+  transform: rotateX(-110deg) translateY(-30px);
+}
+
+/* Hearts — FIXED */
+.heart {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  font-size: 40px;
+  transform: translateX(-50%) scale(0);
+  animation: floatHeart 3s ease-out forwards;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes floatHeart {
+  from {
+    transform: translateX(-50%) translateY(0) scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(calc(-50% + var(--tx))) translateY(-220px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Message */
+.surprise-message {
+  margin-top: 20px;
+  font-size: 1.6rem;
+  text-align: center;
+  line-height: 1.8;
+  color: #2d3748;
+  font-family: 'Bebas Neue', cursive;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.surprise-message.show { opacity: 1; }
+
+/* Confetti */
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  animation: confettiFall linear infinite;
+}
+
+@keyframes confettiFall {
+  0% { 
+    transform: translateY(0) rotateZ(0deg); 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(110vh) rotateZ(720deg); 
+    opacity: 0.7;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page active" id="page1">
+  <div class="instruction">Click the cake 🎂</div>
+  <div class="cake" id="cake">
+    <div class="flame" id="flame"></div>
+    <div class="candle"></div>
+    <div class="frosting">
+      <div class="decoration"></div>
+      <div class="decoration"></div>
+      <div class="decoration"></div>
+      <div class="decoration"></div>
+      <div class="decoration"></div>
+      <div class="decoration"></div>
+    </div>
+    <div class="cake-base"></div>
+  </div>
+  <div class="birthday-text" id="birthdayText">Happy Birthday Bhaia 🎉</div>
+  <button id="nextBtn">Click for a surprise 🎁</button>
+</div>
+
+<div class="page" id="page2">
+  <div class="instruction">Open your gift 🎁</div>
+
+  <div class="gift-box" id="giftBox">
+    <div class="box-lid" id="boxLid"></div>
+    <div class="box-body"></div>
+  </div>
+
+  <div class="surprise-message" id="message">
+    This is the only thing I can afford right now.<br>
+    Lots of love ❤️<br>
+    InshaaAllah next birthday we will spend together.<br>
+    Till then chill 😎
+  </div>
+</div>
+
+<script>
+const cake = document.getElementById('cake');
+const flame = document.getElementById('flame');
+const birthdayText = document.getElementById('birthdayText');
+const nextBtn = document.getElementById('nextBtn');
+const page1 = document.getElementById('page1');
+const page2 = document.getElementById('page2');
+const giftBox = document.getElementById('giftBox');
+const boxLid = document.getElementById('boxLid');
+const message = document.getElementById('message');
+
+let cakeDone = false;
+let giftDone = false;
+
+cake.onclick = () => {
+  if (cakeDone) return;
+  cakeDone = true;
+  flame.classList.add('blown');
+  setTimeout(() => {
+    birthdayText.style.opacity = 1;
+    startConfetti();
+  }, 500);
+  setTimeout(() => nextBtn.style.opacity = 1, 2000);
+};
+
+nextBtn.onclick = () => {
+  page1.classList.remove('active');
+  page2.classList.add('active');
+  
+  // Remove all confetti when switching pages
+  document.querySelectorAll('.confetti').forEach(c => c.remove());
+};
+
+giftBox.onclick = () => {
+  if (giftDone) return;
+  giftDone = true;
+
+  boxLid.classList.add('open');
+  releaseHearts();
+
+  setTimeout(() => message.classList.add('show'), 800);
+};
+
+function releaseHearts() {
+  const hearts = ['❤️','💙','💜','💛','💚','🧡'];
+
+  for (let i = 0; i < 35; i++) {
+    setTimeout(() => {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+      const tx = (Math.random() - 0.5) * 220;
+      heart.style.setProperty('--tx', tx + 'px');
+
+      giftBox.appendChild(heart);
+      setTimeout(() => heart.remove(), 3000);
+    }, i * 60);
+  }
+}
+
+function startConfetti() {
+  const colors = ['#ffb6c1', '#ff69b4', '#ff1493', '#ffd700', '#ffa500', '#4a90e2', '#87ceeb'];
+  
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.width = 5 + Math.random() * 10 + 'px';
+    confetti.style.height = 5 + Math.random() * 10 + 'px';
+    confetti.style.animationDuration = 3 + Math.random() * 4 + 's';
+    confetti.style.animationDelay = Math.random() * 2 + 's';
+    confetti.style.opacity = 0.7 + Math.random() * 0.3;
+    
+    if (Math.random() > 0.5) {
+      confetti.style.borderRadius = '50%';
+    }
+    
+    document.body.appendChild(confetti);
+  }
+}
+</script>
+
+</body>
+</html>
